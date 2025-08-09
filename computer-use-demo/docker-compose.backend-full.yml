@@ -1,0 +1,34 @@
+version: "3.8"
+services:
+  db:
+    image: postgres:16
+    env_file:
+      - ../.env
+    environment:
+      - POSTGRES_DB=cu
+      - POSTGRES_USER=cu
+      - POSTGRES_PASSWORD=cu
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+
+  desktop:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend-full
+    env_file:
+      - ../.env
+    environment:
+      - DATABASE_URL=postgresql+psycopg://cu:cu@db:5432/cu
+    ports:
+      - "8080:8080"  # backend API
+      - "6080:6080"  # noVNC
+      - "5900:5900"  # VNC
+    depends_on:
+      - db
+
+volumes:
+  pg_data: {}
+
+

@@ -1,0 +1,25 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    xdotool scrot imagemagick \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY backend/requirements.txt /app/backend/requirements.txt
+RUN pip install --no-cache-dir -r /app/backend/requirements.txt
+
+# Copy only the backend and the computer_use_demo python module
+COPY computer_use_demo /app/computer_use_demo
+COPY backend /app/backend
+
+ENV PYTHONPATH=/app
+ENV WIDTH=1024
+ENV HEIGHT=768
+EXPOSE 8080
+
+VOLUME ["/data"]
+
+CMD ["python", "-m", "backend.main"]
+
+

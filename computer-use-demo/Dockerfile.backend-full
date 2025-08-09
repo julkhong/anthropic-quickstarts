@@ -1,0 +1,21 @@
+FROM ghcr.io/anthropics/anthropic-quickstarts:computer-use-demo-latest
+
+USER computeruse
+WORKDIR /home/computeruse
+
+# Copy backend and install deps into user site-packages
+COPY --chown=computeruse:computeruse computer_use_demo /home/computeruse/computer_use_demo
+COPY --chown=computeruse:computeruse backend /home/computeruse/backend
+RUN python -m pip install --user -r backend/requirements.txt
+
+COPY --chown=computeruse:computeruse image/entrypoint_backend.sh /home/computeruse/entrypoint_backend.sh
+
+ENV PATH="/home/computeruse/.local/bin:$PATH"
+ENV WIDTH=1024
+ENV HEIGHT=768
+
+EXPOSE 8080 6080 5900
+
+ENTRYPOINT ["./entrypoint_backend.sh"]
+
+
